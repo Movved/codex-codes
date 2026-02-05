@@ -42,9 +42,12 @@ def index():
 def claim_code():
     data = request.json
     input_name = data.get('name')
+    email = data.get('email')
+    appogee = data.get('appogee')
+    dob = data.get('dob')
     
-    if not input_name:
-        return jsonify({'status': 'error', 'message': 'Name is required.'}), 400
+    if not all([input_name, email, appogee, dob]):
+        return jsonify({'status': 'error', 'message': 'All fields are required.'}), 400
 
     sheet = get_sheet_connection()
     if not sheet:
@@ -53,23 +56,8 @@ def claim_code():
     normalized_input_name = normalize_name(input_name)
     
     try:
-        # Fetch all records to search
-        # Note: For very large sheets, this might be slow, but for a club member list (~100s-1000s) it's fine.
-        records = sheet.get_all_records()
-        
-        # We need to find the row index (1-based for gspread updates)
-        # We'll use get_all_records which returns list of dicts.
-        # However, to update, we need the row number. 
-        # So maybe reading cell by cell or using find method is better?
-        # gspread 'find' method is good for this.
-        
-        # Searching in the 'normalized_name' column (Column E -> 5 in 1-based index if A=1)
-        # But 'find' searches the whole sheet or range.
-        
-        # Optimization: Fetch column E to search locally, then find row index.
-        # But gspread find is easier to implement first.
-        
-        cell = sheet.find(normalized_input_name, in_column=5) # Column E is index 5
+        # Search for the name in Column E (index 5)
+        cell = sheet.find(normalized_input_name, in_column=5)
         
         if not cell:
              return jsonify({'status': 'not_found', 'message': 'No matching member found.'})
@@ -77,19 +65,26 @@ def claim_code():
         row_idx = cell.row
         
         # Check 'taken' status (Column C -> 3)
-        taken_val = sheet.cell(row_idx, 3).value  # Get status of 'taken'
-        
-        # Convert to boolean logic. Excel/Sheets 'TRUE' string usually
+        taken_val = sheet.cell(row_idx, 3).value
         is_taken = str(taken_val).strip().upper() == "TRUE"
         
         if is_taken:
             return jsonify({'status': 'claimed', 'message': 'Your code has already been claimed.'})
         
-        # Not taken, return hash (Column B -> 2) and mark as taken
-        hash_code = sheet.cell(row_idx, 2).value
+        # Not taken, proceed to save details and claim code
+        hash_code = sheet.cell(row_idx, 2).value  # Column B -> 2
         
-        # Update 'taken' column to TRUE
+        # Update details in the sheet
+        # Column C: Taken -> TRUE
+        # Column D: Email
+        # Column F: Appogé
+        # Column G: Date of Birth
+        
+        # We use update_cell for simplicity. In a high-traffic app, batch updates would be better.
         sheet.update_cell(row_idx, 3, "TRUE")
+        sheet.update_cell(row_idx, 4, email)
+        sheet.update_cell(row_idx, 6, appogee)
+        sheet.update_cell(row_idx, 7, dob)
         
         return jsonify({'status': 'success', 'code': hash_code})
 

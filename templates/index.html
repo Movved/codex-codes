@@ -23,6 +23,17 @@
                 <div class="input-group">
                     <input type="text" id="nameInput" name="name" placeholder="Full Name" required autocomplete="off">
                 </div>
+                <div class="input-group">
+                    <input type="email" id="emailInput" name="email" placeholder="Email Address" required
+                        autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="appogeeInput" name="appogee" placeholder="Appogé (Student ID)" required
+                        autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="date" id="dobInput" name="dob" placeholder="Date of Birth" required>
+                </div>
                 <button type="submit" id="submitBtn">
                     <span class="btn-text">CLAIM CODE</span>
                     <span class="loader"></span>
@@ -32,6 +43,9 @@
             <div id="resultArea" class="result-area hidden">
                 <div id="resultMessage" class="message"></div>
                 <div id="codeDisplay" class="code-display hidden">
+                    <div class="alert-warning">
+                        ⚠️ CAUTION: This code is shown only ONCE. Do not share it. Save it immediately!
+                    </div>
                     <span id="hashCode"></span>
                     <button class="copy-btn" onclick="copyCode()" title="Copy to clipboard">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -47,6 +61,8 @@
 
         <footer>
             <p>&copy; 2026 Codex Club</p>
+            <p class="help-text">If you encounter any problems, try starting with your Family Name or Personal Name.
+                <br> If the issue persists, please check with a Codex Administrator.</p>
         </footer>
     </div>
 
@@ -61,6 +77,9 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const appogee = document.getElementById('appogeeInput').value;
+            const dob = document.getElementById('dobInput').value;
 
             // Reset state
             setLoading(true);
@@ -72,7 +91,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name: name }),
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        appogee: appogee,
+                        dob: dob
+                    }),
                 });
 
                 const data = await response.json();
@@ -141,6 +165,18 @@
             });
         }
     </script>
+    <style>
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            border: 1px solid #ffeeba;
+            font-weight: 600;
+        }
+    </style>
 </body>
 
 </html>

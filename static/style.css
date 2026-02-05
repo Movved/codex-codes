@@ -67,7 +67,9 @@ header {
     margin-bottom: 1.5rem;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="email"],
+input[type="date"] {
     width: 100%;
     padding: 1rem;
     background: var(--input-bg);
@@ -80,7 +82,9 @@ input[type="text"] {
     text-align: center;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus {
     outline: none;
     border-color: var(--accent);
 }
@@ -237,4 +241,11 @@ footer {
     margin-top: 2rem;
     font-size: 0.75rem;
     color: #72767d;
+}
+
+.help-text {
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    opacity: 0.8;
+    line-height: 1.4;
 }
