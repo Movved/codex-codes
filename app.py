@@ -5,10 +5,12 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
+import json
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
+
 # --- Configuration ---
-# Path to your service account key file. 
-# Make sure this file is in the project root and NOT committed to version control if you use git.
-CREDENTIALS_FILE = 'credentials.json'
 SHEET_NAME = 'Codex Codes'  # The name of your Google Sheet
 
 def get_sheet_connection():
@@ -20,7 +22,20 @@ def get_sheet_connection():
         "https://www.googleapis.com/auth/drive"
     ]
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, scope)
+        # Priority 1: Environment Variable
+        json_creds = os.getenv('GOOGLE_CREDENTIALS')
+        
+        if json_creds:
+            creds_dict = json.loads(json_creds)
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        else:
+            # Priority 2: File (Fallback)
+            if os.path.exists('credentials.json'):
+                creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+            else:
+                print("Error: GOOGLE_CREDENTIALS env var not set and credentials.json not found.")
+                return None
+
         client = gspread.authorize(creds)
         sheet = client.open(SHEET_NAME).sheet1  # Assuming data is in the first sheet
         return sheet

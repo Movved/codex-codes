@@ -62,7 +62,8 @@
         <footer>
             <p>&copy; 2026 Codex Club</p>
             <p class="help-text">If you encounter any problems, try starting with your Family Name or Personal Name.
-                <br> If the issue persists, please check with a Codex Administrator.</p>
+                <br> If the issue persists, please check with a Codex Administrator.
+            </p>
         </footer>
     </div>
 
@@ -177,6 +178,12 @@
             font-weight: 600;
         }
     </style>
+    <script>
+        // Refresh page every 5 minutes (300,000 ms) to keep the server awake
+        setTimeout(function () {
+            window.location.reload();
+        }, 300000);
+    </script>
 </body>
 
 </html>
