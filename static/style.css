@@ -1,0 +1,240 @@
+:root {
+    --bg-color: #36393f;
+    --card-bg: #2f3136;
+    --text-primary: #dcddde;
+    --text-secondary: #b9bbbe;
+    --accent: #5865F2;
+    /* Discord Blurple */
+    --accent-dim: #4752c4;
+    --success: #57F287;
+    --error: #ED4245;
+    --warning: #FEE75C;
+    --border: #202225;
+    --input-bg: #40444b;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    /* Discord is slightly boxy */
+    padding: 2.5rem;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+header {
+    margin-bottom: 2.5rem;
+}
+
+.logo {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 1rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    text-align: center;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.17s ease, color 0.17s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover {
+    background: var(--accent-dim);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Loader */
+.loader {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+button.loading .btn-text {
+    visibility: hidden;
+}
+
+button.loading .loader {
+    display: block;
+}
+
+/* Results */
+.result-area {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 4px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    animation: fadeIn 0.3s ease;
+    text-align: center;
+}
+
+.result-area.hidden {
+    display: none;
+}
+
+.result-area.success {
+    border-left: 4px solid var(--success);
+}
+
+.result-area.error {
+    border-left: 4px solid var(--error);
+    color: var(--error);
+}
+
+.result-area.warning {
+    border-left: 4px solid var(--warning);
+    color: var(--warning);
+}
+
+.code-display {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.code-display.hidden {
+    display: none;
+}
+
+#hashCode {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: #202225;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    letter-spacing: 1px;
+}
+
+.copy-btn {
+    background: #4f545c;
+    padding: 0.5rem 1rem;
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-size: 0.9rem;
+    border-radius: 3px;
+}
+
+.copy-btn:hover {
+    background: #5d6269;
+}
+
+.copy-btn svg {
+    display: block;
+}
+
+.copy-btn.copied {
+    background: var(--success);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+footer {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #72767d;
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Codes | Claim Your Hash</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">CODEX CODES</div>
+            <p class="subtitle">Enter your name to retrieve your unique access hash.</p>
+        </header>
+
+        <main>
+            <form id="claimForm">
+                <div class="input-group">
+                    <input type="text" id="nameInput" name="name" placeholder="Full Name" required autocomplete="off">
+                </div>
+                <button type="submit" id="submitBtn">
+                    <span class="btn-text">CLAIM CODE</span>
+                    <span class="loader"></span>
+                </button>
+            </form>
+
+            <div id="resultArea" class="result-area hidden">
+                <div id="resultMessage" class="message"></div>
+                <div id="codeDisplay" class="code-display hidden">
+                    <span id="hashCode"></span>
+                    <button class="copy-btn" onclick="copyCode()" title="Copy to clipboard">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Codex Club</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('claimForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultArea = document.getElementById('resultArea');
+        const resultMessage = document.getElementById('resultMessage');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const hashCode = document.getElementById('hashCode');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('nameInput').value;
+
+            // Reset state
+            setLoading(true);
+            hideResult();
+
+            try {
+                const response = await fetch('/api/claim', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name }),
+                });
+
+                const data = await response.json();
+
+                // UI Delay for effect
+                setTimeout(() => {
+                    setLoading(false);
+                    showResult(data);
+                }, 600);
+
+            } catch (error) {
+                console.error('Error:', error);
+                setLoading(false);
+                showError('Something went wrong. Please try again later.');
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        }
+
+        function showResult(data) {
+            resultArea.classList.remove('hidden');
+            resultArea.className = 'result-area'; // Reset classes
+
+            if (data.status === 'success') {
+                resultArea.classList.add('success');
+                resultMessage.textContent = 'Identity Verified. Access Hash:';
+                hashCode.textContent = data.code;
+                codeDisplay.classList.remove('hidden');
+            } else {
+                codeDisplay.classList.add('hidden');
+                if (data.status === 'claimed') {
+                    resultArea.classList.add('warning');
+                    resultMessage.textContent = data.message;
+                } else {
+                    resultArea.classList.add('error');
+                    resultMessage.textContent = data.message;
+                }
+            }
+        }
+
+        function showError(msg) {
+            resultArea.classList.remove('hidden');
+            resultArea.className = 'result-area error';
+            resultMessage.textContent = msg;
+            codeDisplay.classList.add('hidden');
+        }
+
+        function hideResult() {
+            resultArea.classList.add('hidden');
+        }
+
+        function copyCode() {
+            const code = hashCode.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.classList.add('copied');
+                setTimeout(() => btn.classList.remove('copied'), 1500);
+            });
+        }
+    </script>
+</body>
+
+</html>
